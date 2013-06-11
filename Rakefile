@@ -1,44 +1,26 @@
-require 'spec'
-require 'spec/rake/spectask'
+require 'rspec'
+require 'rspec/core/rake_task'
 require 'pathname'
 
+DM_VERSION    = '~> 1.2'
+OPTS = ['--backtrace', '--colour', '--format', 'progress']
 ROOT = Pathname(__FILE__).dirname.expand_path
 
 task :default => [ 'spec:unit' ]
 
 namespace :spec do
   desc 'Run unit-level specifications'
-  Spec::Rake::SpecTask.new(:unit) do |t|
-    if File.exists?('spec/spec.opts')
-      t.spec_opts << '--options' << 'spec/spec.opts'
-    end
-    t.spec_files = Pathname.glob((ROOT + 'spec/unit/**/*_spec.rb').to_s)
-    
-    begin
-      t.rcov = ENV.has_key?('NO_RCOV') ? ENV['NO_RCOV'] != 'true' : true
-      t.rcov_opts << '--exclude' << 'spec'
-      t.rcov_opts << '--text-summary'
-      t.rcov_opts << '--sort' << 'coverage' << '--sort-reverse'
-    rescue Exception
-      # rcov not installed
-    end
+  RSpec::Core::RakeTask.new(:unit) do |spec|
+    spec.rspec_opts = OPTS
+    spec.pattern = 'spec/unit/**/*_spec.rb'
+    spec.rcov = false    
   end
 
   desc 'Run integration-level specifications'
-  Spec::Rake::SpecTask.new(:integration) do |t|
-    if File.exists?('spec/spec.opts')
-      t.spec_opts << '--options' << 'spec/spec.opts'
-    end
-    t.spec_files = Pathname.glob((ROOT + 'spec/integration/**/*_spec.rb').to_s)
-    
-    begin
-      t.rcov = ENV.has_key?('NO_RCOV') ? ENV['NO_RCOV'] != 'true' : true
-      t.rcov_opts << '--exclude' << 'spec'
-      t.rcov_opts << '--text-summary'
-      t.rcov_opts << '--sort' << 'coverage' << '--sort-reverse'
-    rescue Exception
-      # rcov not installed
-    end
+  RSpec::Core::RakeTask.new(:integration) do |spec|
+    spec.rspec_opts = OPTS
+    spec.pattern = 'spec/integration/**/*_spec.rb'
+    spec.rcov = false
   end
 
 end
@@ -75,10 +57,10 @@ END
       "Thomas Olausson",
       "Avdi Grimm"
     ]
-    gem.add_dependency('dm-core',               '~> 0.10.0')
-    gem.add_dependency('dm-aggregates',         '~> 0.10.0')
-    gem.add_dependency('dm-migrations',         '~> 0.10.0')
-    gem.add_dependency('dm-types',              '~> 0.10.0')
+    gem.add_dependency('dm-core',               DM_VERSION)
+    gem.add_dependency('dm-aggregates',         DM_VERSION)
+    gem.add_dependency('dm-migrations',         DM_VERSION)
+    gem.add_dependency('dm-types',              DM_VERSION)
     gem.add_dependency('uuidtools',             '~> 2.0')
     gem.add_dependency('sdbtools',              '~> 0.5')
   end

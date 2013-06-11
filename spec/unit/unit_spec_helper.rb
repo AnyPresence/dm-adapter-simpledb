@@ -1,4 +1,4 @@
-require 'spec'
+require 'rspec'
 ROOT = File.expand_path('../..', File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(ROOT,'lib'))
 require 'aws'

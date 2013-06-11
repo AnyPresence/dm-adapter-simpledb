@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(File.join(ROOT,'lib'))
 require 'simpledb_adapter'
 require 'logger'
 require 'fileutils'
-require 'spec'
+require 'rspec'
 require 'spec/autorun'
 
 DOMAIN_FILE_MESSAGE = <<END
