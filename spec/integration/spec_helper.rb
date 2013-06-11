@@ -24,19 +24,7 @@ RSpec.configure do |config|
   access_key  = ENV['AMAZON_ACCESS_KEY_ID']
   secret_key  = ENV['AMAZON_SECRET_ACCESS_KEY']
   domain_file = File.join(ROOT, 'THROW_AWAY_SDB_DOMAIN')
-  test_domain = if File.exist?(domain_file)
-                  File.read(domain_file).strip
-                else
-                  warn DOMAIN_FILE_MESSAGE
-                  exit 1
-                end
-
-  #For those that don't like to mess up their ENV
-  if access_key==nil && secret_key==nil
-    lines = File.readlines(File.join(ROOT, 'aws_config'))
-    access_key = lines[0].strip
-    secret_key = lines[1].strip
-  end
+  test_domain = File.read(File.join(ROOT, 'THROW_AWAY_SDB_DOMAIN')).strip
 
   # Run just once
   config.before :suite do

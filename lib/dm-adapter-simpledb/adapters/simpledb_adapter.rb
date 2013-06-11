@@ -114,8 +114,8 @@ module DataMapper
           # everything filter_records() does EXCEPT limiting.
           records = proto_resources
           records = records.uniq if query.unique?
-          records = query.match_records(records)
-          records = query.sort_records(records)
+          records = query.match_records(records) if query.conditions
+          records = query.sort_records(records)  if query.order
 
           records
         end

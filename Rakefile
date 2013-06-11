@@ -3,7 +3,7 @@ require 'rspec/core/rake_task'
 require 'pathname'
 
 DM_VERSION    = '~> 1.2'
-OPTS = ['--backtrace', '--colour', '--format', 'progress']
+OPTS = ['--backtrace', '--colour', '--format', 'progress', '--fail-fast']
 ROOT = Pathname(__FILE__).dirname.expand_path
 
 task :default => [ 'spec:unit' ]
