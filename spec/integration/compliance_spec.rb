@@ -1,7 +1,10 @@
 require 'pathname'
 require Pathname(__FILE__).dirname.expand_path + 'spec_helper'
 
-require 'dm-core/spec/adapter_shared_spec'
+require 'dm-core/spec/shared/adapter_spec'
+
+ENV['ADAPTER'] = 'simpledb'
+ENV['ADAPTER_SUPPORTS'] = 'all'
 
 describe DataMapper::Adapters::SimpleDBAdapter do
   before :all do
