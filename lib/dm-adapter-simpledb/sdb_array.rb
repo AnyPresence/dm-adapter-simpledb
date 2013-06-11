@@ -11,7 +11,7 @@ require 'dm-types'
 # that 
 module DataMapper
   module Types
-    class SdbArray < DataMapper::Type
+    class SdbArray < DataMapper::Property::Object
       primitive ::Object
       lazy      true
 
