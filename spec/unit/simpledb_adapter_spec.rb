@@ -10,15 +10,9 @@ describe DataMapper::Adapters::SimpleDBAdapter do
     end
     
     it "should be able to save the record" do
-      @sdb.should_receive(:put_attributes).with(
-        anything,
-        anything,
-        hash_including(
-          'simpledb_type' => ["products"], 
-          'stock'         => ["3"],
-          'name'          => ["War and Peace"]),
-        :replace)
-      @record.save
+      @record.id.should == nil
+      @record.save!
+      @record.id.should_not == nil
     end
   end
 

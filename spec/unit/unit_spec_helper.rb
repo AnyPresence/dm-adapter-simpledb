@@ -19,7 +19,7 @@ end
 class Product
   include DataMapper::Resource
 
-  property :id,    Serial
+  property :id,    DataMapper::Property::Serial
   property :name,  String
   property :stock, Integer
 end
@@ -38,7 +38,7 @@ RSpec.configure do |config|
     key  = ENV['AMAZON_SECRET_ACCESS_KEY']
     domain = File.read(File.join(ROOT, 'THROW_AWAY_SDB_DOMAIN')).strip
 
-    DataMapper.setup(:default, 
+    @adapter = DataMapper.setup(:default, 
       :adapter       => 'simpledb',
       :access_key    => id,
       :secret_key    => key,

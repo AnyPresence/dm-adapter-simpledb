@@ -203,7 +203,8 @@ module DmAdapterSimpledb
 
     def extract_attributes(resource)
       attributes = resource.attributes(:property)
-      attributes = attributes.to_a.map {|a| [a.first.name.to_s, a.last]}.to_hash
+      attributes = attributes.to_a.map {|a| [a.first.name.to_s, a.last]}
+      attributes = Hash[*attributes.flatten(1)]
       attributes = adjust_to_sdb_attributes(attributes)
       updates, deletes = attributes.partition{|name,value|
         !Array(value).empty?
@@ -240,8 +241,8 @@ module DmAdapterSimpledb
     end
 
     def primitive_value_of(type)
-      if type < DataMapper::Type
-        type.primitive
+      if type < DataMapper::Property::Object
+        DataMapper::Inflector.demodulize(type)
       else
         type
       end
