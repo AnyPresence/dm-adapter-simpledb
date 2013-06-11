@@ -136,12 +136,12 @@ module DmAdapterSimpledb
       before :each do
         @conditions = Operation.new(
           :or,
-          Comparison.new(:in, Post.properties[:body], []),
-          Comparison.new(:in, Post.properties[:title], ["foo"]))
+          Comparison.new(:in, Post.properties[:title], ["foo"]),
+          Comparison.new(:in, Post.properties[:body], []))
         @it = WhereExpression.new(@conditions)
       end
 
-      specify { @it.to_s.should == 'body IS NULL OR title IN ("foo")' }
+      specify { ['title IN ("foo") OR body IS NULL', 'body IS NULL OR title IN ("foo")' ].should include(@it.to_s) }
     end
 
     context "given an IN query with a range" do
@@ -165,7 +165,7 @@ module DmAdapterSimpledb
         @it = WhereExpression.new(@conditions)
       end
 
-      specify { @it.to_s.should == 'body = "42" AND title BETWEEN "A" AND "Z"' }
+      specify { ['body = "42" AND title BETWEEN "A" AND "Z"', 'title BETWEEN "A" AND "Z" AND body = "42"'].should include(@it.to_s) }
 
       it "should include the range in unsupported conditions" do
         @it.unsupported_conditions.should be ==
@@ -244,7 +244,7 @@ module DmAdapterSimpledb
         @it = WhereExpression.new(@conditions)
       end
 
-      specify { @it.to_s.should == 'body in ("FUZ", "BUZ")' }
+      specify { ['body in ("FUZ", "BUZ")', 'body in ("BUZ", "FUZ")'].should include(@it.to_s)  }
     end
 
     context "given a literal expression with subarray of replacements" do
@@ -255,7 +255,7 @@ module DmAdapterSimpledb
         @it = WhereExpression.new(@conditions)
       end
 
-      specify { @it.to_s.should == 'body in ("FUZ", "BUZ")' }
+      specify { ['body in ("FUZ", "BUZ")', 'body in ("BUZ", "FUZ")'].should include(@it.to_s) }
     end
 
     context "given a literal expression" do
@@ -281,34 +281,37 @@ module DmAdapterSimpledb
         @it = WhereExpression.new(@conditions)
       end
 
-      specify { @it.to_s.should == 'title = "foo" and body = "bar"' }
+      specify { ['title = "foo" and body = "bar"', 'body = "bar" and title = "foo"'].should include(@it.to_s) }
     end
 
     context "given a two ANDed comparisons" do
       before :each do
         @conditions = Operation.new(
           :and,
-          Comparison.new(:eql, Post.properties[:title], "FOO"),
-          Comparison.new(:eql, Post.properties[:body],  "BAR"))
+          Comparison.new(:eql, Post.properties[:body],  "BAR"),
+          Comparison.new(:eql, Post.properties[:title], "FOO"))
         @it = WhereExpression.new(@conditions)
       end
 
-      specify { @it.to_s.should == 'body = "BAR" AND title = "FOO"' }
+      specify { ['body = "BAR" AND title = "FOO"', 'title = "FOO" AND body = "BAR"'].should include( @it.to_s) }
     end
 
     context "given an OR nested in an AND comparisons" do
       before :each do
         @conditions = Operation.new(
           :and,
-          Comparison.new(:eql, Post.properties[:title], "FOO"),
           Operation.new(:or,
-            Comparison.new(:eql, Post.properties[:body],  "BAR"),
-            Comparison.new(:eql, Post.properties[:body],  "BAZ")))
+            Comparison.new(:eql, Post.properties[:body],  "BAZ"),
+            Comparison.new(:eql, Post.properties[:body],  "BAR")),
+          Comparison.new(:eql, Post.properties[:title], "FOO"))
         @it = WhereExpression.new(@conditions)
       end
 
       specify { 
-        @it.to_s.should == '( body = "BAR" OR body = "BAZ" ) AND title = "FOO"'
+        ['( body = "BAR" OR body = "BAZ" ) AND title = "FOO"',
+          '( body = "BAZ" OR body = "BAR" ) AND title = "FOO"',
+          'title = "FOO" AND ( body = "BAR" OR body = "BAZ" )',
+          'title = "FOO" AND ( body = "BAZ" OR body = "BAR" )'].should include(@it.to_s) 
       }
     end
 
@@ -321,7 +324,7 @@ module DmAdapterSimpledb
         @it = WhereExpression.new(@conditions)
       end
 
-      specify { @it.to_s.should == 'body = "BAR" OR title = "FOO"' }
+      specify { ['body = "BAR" OR title = "FOO"', 'title = "FOO" OR body = "BAR"'].should include(@it.to_s) }
     end
 
     context "given an intersection" do
@@ -333,7 +336,7 @@ module DmAdapterSimpledb
         @it = WhereExpression.new(@conditions)
       end
 
-      specify { @it.to_s.should == 'body = "BAR" OR title = "FOO"' }
+      specify { ['body = "BAR" OR title = "FOO"', 'title = "FOO" OR body = "BAR"'].should include(@it.to_s) }
     end
 
     context "given a negated AND comparison" do
@@ -347,7 +350,7 @@ module DmAdapterSimpledb
         @it = WhereExpression.new(@conditions)
       end
 
-      specify { @it.to_s.should == 'NOT ( body = "BAR" AND title = "FOO" )' }
+      specify { ['NOT ( body = "BAR" AND title = "FOO" )', 'NOT ( title = "FOO" AND body = "BAR" )'].should include(@it.to_s)  }
     end
 
     context "given individually negated equality comparisons" do
@@ -361,7 +364,7 @@ module DmAdapterSimpledb
         @it = WhereExpression.new(@conditions)
       end
 
-      specify { @it.to_s.should == 'body != "BAR" AND title != "FOO"' }
+      specify { ['title != "FOO" AND body != "BAR"', 'body != "BAR" AND title != "FOO"'].should include( @it.to_s) }
     end
 
   end
