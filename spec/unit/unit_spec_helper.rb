@@ -4,6 +4,32 @@ $LOAD_PATH.unshift(File.join(ROOT,'lib'))
 require 'aws'
 require 'simpledb_adapter'
 
+class Book
+  include DataMapper::Resource
+  storage_names[:default] = "books"
+  storage_names[:backup]  = "tomes"
+
+  property :author,       String, :key => true
+  property :date,         Date
+  property :text,         DataMapper::Property::Text
+  property :tags,         DataMapper::Property::SdbArray
+  property :isbn,         String
+end
+
+class Product
+  include DataMapper::Resource
+
+  property :id,    Serial
+  property :name,  String
+  property :stock, Integer
+end
+
+class Poem
+  include ::DataMapper::Resource
+
+  property :text, String, :key => true
+end
+
 RSpec.configure do |config|
   config.before :each do
     @sdb = stub("AWS::SdbInterface").as_null_object
@@ -20,6 +46,8 @@ RSpec.configure do |config|
       :logger        => @log,
       :sdb_interface => @sdb
       )
+    
+    DataMapper.finalize
   end
 
   config.after :each do

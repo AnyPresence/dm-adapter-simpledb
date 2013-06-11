@@ -111,7 +111,7 @@ module DmAdapterSimpledb
     end
 
     def coerce_to_property(value, property)
-      property.typecast(coerce_to_type(value, property.type))
+      property.typecast(coerce_to_type(value, DataMapper::Inflector.constantize(DataMapper::Inflector.demodulize(property.class))))
     end
 
     def coerce_to_type(values, type)
@@ -125,7 +125,7 @@ module DmAdapterSimpledb
         else
           ChunkedString.new(values)
         end
-      when type <= Array, type <= DataMapper::Types::SdbArray
+      when type <= Array, type <= DataMapper::Property::SdbArray
         values
       else
         values.first

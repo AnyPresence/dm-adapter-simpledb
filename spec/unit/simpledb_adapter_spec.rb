@@ -2,13 +2,7 @@ require File.expand_path('unit_spec_helper', File.dirname(__FILE__))
 require 'simpledb_adapter'
 
 describe DataMapper::Adapters::SimpleDBAdapter do
-  class Product
-    include DataMapper::Resource
 
-    property :id,    Serial
-    property :name,  String
-    property :stock, Integer
-  end
 
   describe "given a record" do
     before :each do

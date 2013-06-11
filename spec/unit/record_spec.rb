@@ -7,10 +7,10 @@ describe DmAdapterSimpledb::Record do
 
   context "given a record from SimpleDB" do
     before :each do
-      @thing_class = Class.new do
+      @thing_class = class Garbage
         include DataMapper::Resource
 
-        property :foo, Integer
+        property :foo, Integer, :key => true
       end
       @it = DmAdapterSimpledb::Record.from_simpledb_hash(
         {"KEY" => {
@@ -56,7 +56,7 @@ describe DmAdapterSimpledb::Record do
 
   context "given a record with no version info" do
     before :each do
-      @resource_class = Class.new do
+      @resource_class = class Humpty
         include DataMapper::Resource
 
         property :foo, Integer, :key => true
@@ -145,10 +145,10 @@ describe DmAdapterSimpledb::Record do
 
   context "given a version 1.1 record" do
     before :each do
-      @resource_class = Class.new do
+      @resource_class = class Dumpty
         include DataMapper::Resource
       
-        property :bar, Integer
+        property :bar, Integer, :key => true
       end
 
       @it = DmAdapterSimpledb::Record.from_simpledb_hash(
@@ -189,10 +189,7 @@ describe DmAdapterSimpledb::Record do
   end
 
   context "given a V1.1 record with a chunked string" do
-    class Poem
-      include ::DataMapper::Resource
-      property :text, String
-    end
+
 
     before :each do 
       @it = DmAdapterSimpledb::Record.from_simpledb_hash(
@@ -232,27 +229,17 @@ describe DmAdapterSimpledb::Record do
 
   describe "given an unsaved (new) datamapper resource" do
     before :each do
-      @resource_class = Class.new do
-        include DataMapper::Resource
-        storage_names[:default] = "books"
-        storage_names[:backup]  = "tomes"
 
-        property :author,       String, :key => true
-        property :date,         Date
-        property :text,         DataMapper::Types::Text
-        property :tags,         DataMapper::Types::SdbArray
-        property :isbn,         String
-      end
+      
       @text   = "lorem ipsum\n" * 100
       @date   = Date.new(2001,1,1)
       @author = "Cicero"
-      @resource = @resource_class.new(
+      @resource = Book.new(
         :text => @text,
         :date => @date,
         :author => @author,
         :tags  => ['latin', 'classic'],
         :isbn  => nil)
-
       @it = DmAdapterSimpledb::Record.from_resource(@resource)
     end
 
@@ -286,7 +273,7 @@ describe DmAdapterSimpledb::Record do
       end
 
       it "should be able to round-trip arrays" do
-        DmAdapterSimpledb::Record.from_simpledb_hash({"NAME" => @hash})["tags", DataMapper::Types::SdbArray].should ==
+        DmAdapterSimpledb::Record.from_simpledb_hash({"NAME" => @hash})["tags", DataMapper::Property::SdbArray].should ==
           ['latin', 'classic']
       end
 
@@ -322,19 +309,9 @@ describe DmAdapterSimpledb::Record do
 
   describe "given a saved datamapper resource" do
     before :each do
-      @resource_class = Class.new do
-        include DataMapper::Resource
-        storage_names[:default] = "books"
-
-        property :author,       String, :key => true
-        property :date,         Date
-        property :text,         DataMapper::Types::Text
-        property :tags,         DataMapper::Types::SdbArray
-        property :isbn,         String
-      end
       @date   = Date.new(2001,1,1)
       @author = "Cicero"
-      @resource = @resource_class.new(
+      @resource = Book.new(
         :text => "",
         :date => @date,
         :author => @author,

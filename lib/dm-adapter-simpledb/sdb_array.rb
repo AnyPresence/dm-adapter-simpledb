@@ -10,11 +10,15 @@ require 'dm-types'
 # property has a value of nil until it is loaded. If you assign nil, DM thinks
 # that 
 module DataMapper
-  module Types
+  class Property
     class SdbArray < DataMapper::Property::Object
       primitive ::Object
       lazy      true
-
+      
+      def custom?
+        true
+      end
+            
       def self.load(value, property)
         value
       end
