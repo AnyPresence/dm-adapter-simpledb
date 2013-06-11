@@ -5,7 +5,7 @@ require 'simpledb_adapter'
 require 'logger'
 require 'fileutils'
 require 'rspec'
-require 'spec/autorun'
+require 'rspec/core'
 
 DOMAIN_FILE_MESSAGE = <<END
 !!! ATTENTION !!!
@@ -20,7 +20,7 @@ the name of the SimpleDB domain to use for tests. E.g.
 
 END
 
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
   access_key  = ENV['AMAZON_ACCESS_KEY_ID']
   secret_key  = ENV['AMAZON_SECRET_ACCESS_KEY']
   domain_file = File.join(ROOT, 'THROW_AWAY_SDB_DOMAIN')
