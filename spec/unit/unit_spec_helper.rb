@@ -32,8 +32,6 @@ end
 
 RSpec.configure do |config|
   config.before :each do
-    @sdb = stub("AWS::SdbInterface").as_null_object
-    @log = stub("Log").as_null_object
     id = ENV['AMAZON_ACCESS_KEY_ID']
     key  = ENV['AMAZON_SECRET_ACCESS_KEY']
     domain = File.read(File.join(ROOT, 'THROW_AWAY_SDB_DOMAIN')).strip
@@ -43,8 +41,7 @@ RSpec.configure do |config|
       :access_key    => id,
       :secret_key    => key,
       :domain        => domain,
-      :logger        => @log,
-      :sdb_interface => @sdb
+      :wait_for_consistency => :automatic
       )
     
     DataMapper.finalize

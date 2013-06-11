@@ -111,7 +111,7 @@ module DmAdapterSimpledb
     end
 
     def coerce_to_property(value, property)
-      property.typecast(coerce_to_type(value, DataMapper::Inflector.constantize(DataMapper::Inflector.demodulize(property.class))))
+      property.typecast(coerce_to_type(value, property.primitive))
     end
 
     def coerce_to_type(values, type)

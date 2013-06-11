@@ -6,7 +6,7 @@ describe DataMapper::Adapters::SimpleDBAdapter do
 
   describe "given a record" do
     before :each do
-      @record = Product.new(:name => "War and Peace", :stock => 3)
+      @record = Product.new(:name => "War and Peace", :stock => 1)
     end
     
     it "should be able to save the record" do
@@ -18,50 +18,32 @@ describe DataMapper::Adapters::SimpleDBAdapter do
 
   describe "given an existing record" do
     before :each do
-      @sdb.stub(:select).
-        and_return(:items => [
-          {"HANDLE" => {
-              'id'    => ['12345'], 
-              'name'  => ['War and Peace'], 
-              'stock' => ['3']}}
-        ])
-      @record = Product.first
+      @id
+      @record = Product.new(:name => "Alice in Wonderland", :stock => 3)
+      @record.save!
+      @id = @record.id
     end
     
     it "should be able to update the record" do
       @record.stock = 5
-      @sdb.should_receive(:put_attributes).with(
-        anything,
-        anything,
-        hash_including('stock' => ["5"]),
-        :replace)
-      @record.save
+      @record.save.should be true
+      saved = Product.first(:name => "Alice in Wonderland")
+      expect(saved.stock).to eq(5)
+      expect(saved.name).to eq("Alice in Wonderland")
     end
   end
 
   describe "given a record exists in the DB" do
     before :each do
-      @sdb.stub(:select).
-        and_return(:items => [
-          {"HANDLE" => {
-              'id'    => ['12345'], 
-              'name'  => ['War and Peace'], 
-              'stock' => ['3'],
-              '__dm_metadata' => ['v01.01.00', 'foobar']}}
-        ])
+      @record = Product.new(:name => "A Million Little Fibers", :stock => 4)
+      @record.save!
+      @id = @record.id
     end
     
     it "should request metadata for the record" do
-      @sdb.should_receive(:select).
-        with(/select.*__dm_metadata.*from/i, anything).
-        and_return(:items => [
-          {"HANDLE" => {
-              'id'    => ['12345'], 
-              'name'  => ['War and Peace'], 
-              'stock' => ['3'],
-              '__dm_metadata' => ['v01.01.00', 'foobar']}}
-        ])
-      @record = Product.first
+      saved = Product.first(:name => "A Million Little Fibers")
+      expect(saved.name).to eq("A Million Little Fibers")
+      saved.stock.should be 4
     end
   end
 
