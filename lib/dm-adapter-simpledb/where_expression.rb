@@ -161,8 +161,8 @@ module DmAdapterSimpledb
 
             # Or it may be that something else is going wrong.  But the upshot
             # is that the post-filtering step doesn't work.
-            raise NotImplementedError, 
-                  "Exclusive ranges are not supported by the SimpleDB adapter"
+            #raise NotImplementedError, "Exclusive ranges are not supported by the SimpleDB adapter"
+            throw :unsupported
           else
             "BETWEEN"
           end

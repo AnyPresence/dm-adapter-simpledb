@@ -13,6 +13,7 @@ gem 'dm-validations', DM_VERSION
 gem 'aws', '~> 2.1'
 gem 'sdbtools', '~> 0.5.0'
 gem 'uuidtools', '~> 2.0'
+gem 'multi_json'
 
 group :development, :test do
   gem 'rspec'

@@ -1,139 +1,85 @@
 require 'pathname'
 require Pathname(__FILE__).dirname.expand_path + 'spec_helper'
 
-class Friend
-  include DataMapper::Resource
-  
-  property :id,         String, :key => true
-  property :name,       String, :key => true
-  property :long_name,  String
-  property :long_name_two,  String
-  property :age,        Integer
-  property :wealth,     Float
-  property :birthday,   Date
-  property :created_at, DateTime
-  property :long_string, String
-  
-  belongs_to :network
-end
-
-class Network
-  include DataMapper::Resource
-  
-  property :id,   String, :key => true
-  property :name, String, :key => true
-  
-  has n, :friends
-end
-
 describe DataMapper::Adapters::SimpleDBAdapter do
 
-  class Project
-    include DataMapper::Resource
-    property :id, Integer, :key => true
-    property :project_repo, String
-    property :repo_user, String
-    property :description, String
-  end
-
-
-  LONG_VALUE =<<-EOF
-    #!/bin/sh
-
-set -o errexit
-
-################################################################################
-# build
-#
-# This hook is responsible for running a full "build" of the project for the 
-# purpose of Continuus Integration
-#
-################################################################################
-
-rake
-# && rake metrics:all
-
-#more
-EOF
-
   before(:each) do
-
-
-    @friend_attrs = { :id => "person-#{Time.now.to_f.to_s}", :name => 'Jeremy Boles', :age  => 25, :wealth => 25.00, :birthday => Date.today,
-      :long_name => 'short', :long_name_two => 'short', :long_string => LONG_VALUE}
-#.gsub("\n","br")
-    @friend = Friend.new(@friend_attrs)
+    @friend = Friend.new(:ssn => "person-#{Time.now.to_f.to_s}", :name => 'Jeremy Boles', :age  => 25, :wealth => 25.00, :birthday => Date.today,
+      :long_name => 'short', :long_name_two => 'short', :long_string => LONG_VALUE)
   end
   
   it 'should create a record' do
-    @friend.save.should be_true
-    @friend.id.should_not be_nil
+    @friend.save!
+    Friend.all.each do |friend|
+      friend.should == @friend
+    end
+    @friend.ssn.should_not be_nil
     @friend.destroy
   end
   
   describe 'with a saved record' do
-    before(:each) { @friend.save; sleep(0.4) } #sleep or it might not be on SDB at when the test checks it
-    after(:each)  { @friend.destroy; sleep(0.4) } #same issues for the next test could still be there
+    before(:each) { @friend.save!; sleep(0.4) } #sleep or it might not be on SDB at when the test checks it
+    after(:each)  {  sleep(0.4) } #same issues for the next test could still be there
     
     it 'should get a record' do
-      person = Friend.get!(@friend.id, @friend.name)
+      person = Friend.get!(@friend.ssn, @friend.name)
       person.should_not be_nil
       person.wealth.should == @friend.wealth
     end
     
-    it 'should not get records of the wrong type by id' do
-      Network.get(@friend.id, @friend.name).should == nil
-      lambda { Network.get!(@friend.id, @friend.name) }.should raise_error(DataMapper::ObjectNotFoundError)
+    it 'should not get records of the wrong type by ssn' do
+      Network.get(@friend.ssn, @friend.name).should == nil
+      lambda { Network.get!(@friend.ssn, @friend.name) }.should raise_error(DataMapper::ObjectNotFoundError)
     end    
 
     it 'should update a record' do
-      person = Friend.get!(@friend.id, @friend.name)
+      person = Friend.get!(@friend.ssn, @friend.name)
       person.wealth = 100.00
       person.save
       sleep(0.3)
-      person = Friend.get!(@friend.id, @friend.name)
+      person = Friend.get!(@friend.ssn, @friend.name)
       person.wealth.should_not == @friend.wealth
       person.age.should == @friend.age
-      person.id.should == @friend.id
+      person.ssn.should == @friend.ssn
       person.name.should == @friend.name
     end
 
     it 'should update a record with a long string over 1024' do
-      person = Friend.get!(@friend.id, @friend.name)
+      person = Friend.get!(@friend.ssn, @friend.name)
       long_string = "*" * 1026
       person.long_name = long_string
       person.save
       sleep(0.3)
-      person = Friend.get!(@friend.id, @friend.name)
+      person = Friend.get!(@friend.ssn, @friend.name)
       person.long_name.should == long_string
-      person.id.should == @friend.id
+      person.ssn.should == @friend.ssn
       person.name.should == @friend.name
     end
 
     it 'should update a record with with two long strings over 1024' do
-      person = Friend.get!(@friend.id, @friend.name)
+      person = Friend.get!(@friend.ssn, @friend.name)
       long_string = "*" * 1026
       long_string_two = (0...2222).map{ ('a'..'z').to_a[rand(26)] }.join
       person.long_name = long_string
       person.long_name_two = long_string_two
       person.save
       sleep(0.3)
-      person = Friend.get!(@friend.id, @friend.name)
+      person = Friend.get!(@friend.ssn, @friend.name)
       person.long_name.should == long_string
       person.long_name_two.should == long_string_two
-      person.id.should == @friend.id
+      person.ssn.should == @friend.ssn
       person.name.should == @friend.name
     end
 
     it 'should save a record with string in the correct order' do
-      person = Friend.get!(@friend.id, @friend.name)
+      person = Friend.get!(@friend.ssn, @friend.name)
       person.long_string.should == LONG_VALUE#.gsub("\n","br")
     end
 
     it 'should destroy a record' do
       @friend.destroy.should be_true
       sleep(0.4) #make sure SDB propigates change
-      lambda {Friend.get!(@friend.id, @friend.name)}.should raise_error(DataMapper::ObjectNotFoundError)
+      lambda {Friend.get!(@friend.ssn, @friend.name)}.should raise_error(DataMapper::ObjectNotFoundError)
       persons = Friend.all(:name => @friend.name)
       persons.length.should == 0
     end
@@ -159,7 +105,7 @@ EOF
         "project_repo"   => ["git://github.com/TwP/servolux.git"], 
         "files_complete" => ["nil"], 
         "repo_user"      => ["nil"], 
-        "id"             => ["1077338529"], 
+        "ssn"             => ["1077338529"], 
         "description"    => [
             "0002:line 2[[[NEWLINE]]]line 3[[[NEW",
             "0001:line 1[[[NEWLINE]]]",
@@ -193,14 +139,14 @@ EOF
     before :each do
       @record = Project.new(
         :repo_user    => "steve", 
-        :id           => 123, 
+        :ssn           => 123, 
         :project_repo => "git://example.org/foo")
     end
 
     it "should add metadata to the record on save" do
       @record.save
       sleep 0.4
-      items = @sdb.select("select * from #{@domain} where id = '123'")[:items]
+      items = @sdb.select("select * from #{@domain} where ssn = '123'")[:items]
       attributes = items.first.values.first
       attributes["__dm_metadata"].should include("v01.01.00")
       attributes["__dm_metadata"].should include("table:projects")

@@ -1,29 +1,15 @@
 require 'pathname'
 require Pathname(__FILE__).dirname.expand_path + 'spec_helper'
 
-class Enemy
-  include DataMapper::Resource
-  
-  property :id,         String, :key => true
-  property :name,       String, :key => true
-  property :age,        Integer
-  property :wealth,     Float
-  property :birthday,   Date
-  property :created_at, DateTime
-end
-
 describe 'with nils records saved and retreived' do
   before(:all) do
     @person_attrs = { :id => "person-#{Time.now.to_f.to_s}", :name => 'Jeremy Boles', :age  => 25, :wealth => 25.00, :birthday => Date.today }
     @jeremy   = Enemy.create(@person_attrs.merge(:id => Time.now.to_f.to_s, :name => "Jeremy Boles", :age => 25))
     @danielle = Enemy.create(@person_attrs.merge(:id => Time.now.to_f.to_s, :name => "Danielle", :age => nil, :birthday => nil))
-    @adapter.wait_for_consistency
   end
   
   after(:all) do
-    @jeremy.destroy
-    @danielle.destroy
-    @adapter.wait_for_consistency
+    Enemy.destroy
   end
   
   it 'should get all records' do

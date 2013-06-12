@@ -6,7 +6,7 @@ require 'logger'
 require 'fileutils'
 require 'rspec'
 require 'rspec/core'
-
+require 'dm-validations'
 DOMAIN_FILE_MESSAGE = <<END
 !!! ATTENTION !!!
 In order to operate, these specs need a throwaway SimpleDB domain to operate
@@ -20,6 +20,127 @@ the name of the SimpleDB domain to use for tests. E.g.
 
 END
 
+class Heffalump
+  include DataMapper::Resource
+  property :id,        DataMapper::Property::Serial
+  property :color,     DataMapper::Property::String
+  property :num_spots, DataMapper::Property::Integer
+  property :striped,   DataMapper::Property::Boolean
+
+  # This is needed for DataMapper.finalize
+  def self.name
+    'Heffalump'
+  end
+end
+
+class Professor
+  include DataMapper::Resource
+  
+  property :id,         String, :key => true
+  property :name,       String, :key => true
+  property :age,        Integer
+  property :wealth,     Float
+  property :birthday,   Date
+  property :created_at, DateTime
+  
+end
+
+class Hero
+  include DataMapper::Resource
+  
+  property :id,         String, :key => true
+  property :name,       String, :key => true
+  property :age,        Integer
+  property :wealth,     Float
+  property :birthday,   Date
+  property :created_at, DateTime
+  
+end
+
+class Fluffy
+  include DataMapper::Resource
+  
+  property :id,         Serial
+  property :name,       String, :key => true
+  property :age,        Integer
+  property :wealth,     Float
+  property :birthday,   Date
+  property :created_at, DateTime
+  
+end
+
+class Person
+  include DataMapper::Resource
+  property :id,         DataMapper::Property::Serial
+  property :ssn,        DataMapper::Property::String
+  property :name,       DataMapper::Property::String
+  property :age,        DataMapper::Property::Integer
+  property :wealth,     DataMapper::Property::Float
+  property :birthday,   DataMapper::Property::Date
+  property :created_at, DataMapper::Property::DateTime
+  
+  belongs_to :company
+end
+
+#TODO write some tests with company or drop this
+class Company
+  include DataMapper::Resource
+  
+  property :id,   DataMapper::Property::Serial
+  property :name, DataMapper::Property::String, :key => true
+  
+  has n, :people
+end
+
+class Enemy
+  include DataMapper::Resource
+  
+  property :id,         String, :key => true
+  property :name,       String, :key => true
+  property :age,        Integer
+  property :wealth,     Float
+  property :birthday,   Date
+  property :created_at, DateTime
+end
+
+class Friend
+  include DataMapper::Resource
+
+  property :ssn,        DataMapper::Property::String, :key => true
+  property :name,       DataMapper::Property::String, :key => true
+  property :long_name,  DataMapper::Property::String
+  property :long_name_two,  DataMapper::Property::String
+  property :age,        DataMapper::Property::Integer
+  property :wealth,     DataMapper::Property::Float
+  property :birthday,   DataMapper::Property::Date
+  property :created_at, DataMapper::Property::DateTime
+  property :long_string, DataMapper::Property::String
+  
+  belongs_to :network
+end
+
+class Network
+  include DataMapper::Resource
+  
+  property :id,   DataMapper::Property::String, :key => true
+  property :name, DataMapper::Property::String, :key => true
+  
+  has n, :friends
+end
+
+class Project
+  include DataMapper::Resource
+  property :id, DataMapper::Property::Integer, :key => true
+  property :project_repo, DataMapper::Property::String
+  property :repo_user, DataMapper::Property::String
+  property :description, DataMapper::Property::String
+end
+
+LONG_VALUE = <<TEXT
+This is some garbage really. I mean I don't know what else to say at this point. 
+But yay and go team, or else ManBearPig will get you, thuper therial!
+
+TEXT
 RSpec.configure do |config|
   access_key  = ENV['AMAZON_ACCESS_KEY_ID']
   secret_key  = ENV['AMAZON_SECRET_ACCESS_KEY']
@@ -45,6 +166,7 @@ RSpec.configure do |config|
         :wait_for_consistency => :manual
       })
     $control_sdb = adapter.sdb_interface
+    DataMapper.finalize
   end
 
   # Run before each group

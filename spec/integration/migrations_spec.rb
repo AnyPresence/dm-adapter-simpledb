@@ -4,18 +4,6 @@ require 'dm-migrations'
 
 describe 'support migrations' do
   
-  #TODO do this on different storage
-  class Person
-    include DataMapper::Resource
-    
-    property :id,         String, :key => true
-    property :name,       String, :key => true
-    property :age,        Integer
-    property :wealth,     Float
-    property :birthday,   Date
-    property :created_at, DateTime
-    
-  end
 
 #  test can't be run simultanious make it delete a throwawaable storage model
 #  instead of the one used by all the tests 
@@ -29,12 +17,13 @@ describe 'support migrations' do
 #  end
   
   before :all do
-    @sdb.delete_domain(@domain)
+#    @sdb.delete_domain(@domain)
+    Fluffy.destroy
   end
 
   it "should create model storage" do
-    DataMapper.auto_migrate!
-    @adapter.storage_exists?(@domain).should == true
+    person = Fluffy.create(:name => "Humpty Dumpty")
+    Fluffy.all.should include(person)
   end
   
 end

@@ -25,7 +25,8 @@ describe 'with multiple records saved' do
   
   it 'should store hobbies as array' do
     person = Hobbyist.first(:name => 'Jeremy Boles')
-    person.hobbies.sort.should == ["biking", "diving", "chess"].sort
+    garbage = person.hobbies.sort
+    garbage.should == ["biking", "diving", "chess"].sort
   end
   
   it 'should allow updates to array' do

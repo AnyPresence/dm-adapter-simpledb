@@ -1,111 +1,95 @@
 require 'pathname'
 require Pathname(__FILE__).dirname.expand_path + 'spec_helper'
 
-class Person
-  include DataMapper::Resource
-  
-  property :id,         String, :key => true
-  property :name,       String, :key => true
-  property :age,        Integer
-  property :wealth,     Float
-  property :birthday,   Date
-  property :created_at, DateTime
-  
-  belongs_to :company
-end
-
-#TODO write some tests with company or drop this
-class Company
-  include DataMapper::Resource
-  
-  property :id,   String, :key => true
-  property :name, String, :key => true
-  
-  has n, :people
-end
-
 describe 'with multiple records saved' do
-  before(:all) do
-    @person_attrs = { :id => "person-#{Time.now.to_f.to_s}", :name => 'Jeremy Boles', :age  => 25, :wealth => 25.00, :birthday => Date.today }
-    @jeremy   = Person.create(@person_attrs.merge(:id => Time.now.to_f.to_s, :name => "Jeremy Boles", :age => 25))
-    @danielle = Person.create(@person_attrs.merge(:id => Time.now.to_f.to_s, :name => "Danille Boles", :age => 26))
-    @keegan   = Person.create(@person_attrs.merge(:id => Time.now.to_f.to_s, :name => "Keegan Jones", :age => 20))
-    @adapter.wait_for_consistency
+  before(:each) do
+    Person.destroy
+    @jeremy   = Person.create(:ssn => Time.now.to_f.to_s, :name => "Jeremy Boles", :age => 25, :wealth => 25.00)
+    @danielle = Person.create(:ssn => Time.now.to_f.to_s, :name => "Danille Boles", :age => 26, :wealth => 25.00)
+    @keegan   = Person.create(:ssn => Time.now.to_f.to_s, :name => "Keegan Jones", :age => 20, :wealth => 25.00)
   end
   
   after(:all) do
-    @jeremy.destroy
-    @danielle.destroy
-    @keegan.destroy
+    Person.destroy
   end
   
   it 'should get all records' do
-    Person.all.length.should == 3
+    
+    Person.all.each do |person|
+      [@jeremy, @danielle, @keegan].should be_include(person)
+    end
   end
   
   it 'should get records by eql matcher' do
-    people = Person.all(:age => 25)
-    people.length.should == 1
+    Person.all(:age => 25).each_with_index do |person, index|
+      person.should == @jeremy
+      index.should == 0
+    end
   end
 
   it 'should get record by eql matcher' do
-    person = Person.first(:conditions => {:age => 25})
-    person.should_not be_nil
+    Person.all(:conditions => {:age => 25}).each_with_index do |person, index|
+      person.should == @jeremy
+      index.should == 0
+    end
   end
   
   it 'should get records by not matcher' do
-    people = Person.all(:age.not => 25)
-    people.should have(2).entries
-  end
-
-  it 'should get record by not matcher' do
-    person = Person.first(:age.not => 25)
-    person.should_not be_nil
+    Person.all(:age.not => 25).each do |person|
+      person.should_not == @jeremy
+    end
   end
   
   it 'should get records by gt matcher' do
-    people = Person.all(:age.gt => 25)
-    people.length.should == 1
+    people = Person.all(:age.gt => 25).each_with_index do |person, index|
+      person.should == @danielle
+      index.should == 0
+    end
   end
   
   it 'should get records by gte matcher' do
-    people = Person.all(:age.gte => 25)
-    people.length.should == 2
+    people = Person.all(:age.gte => 25).each_with_index do |person, index|
+      [@jeremy, @danielle].should be_include(person)
+      index.should < 2
+    end
   end
   
   it 'should get records by lt matcher' do
-    people = Person.all(:age.lt => 25)
-    people.length.should == 1
+    people = Person.all(:age.lt => 25).each_with_index do |person, index|
+      person.should == @keegan
+      index.should == 0
+    end
   end
   
   it 'should get records by lte matcher' do
-    people = Person.all(:age.lte => 25)
-    people.length.should == 2
-  end
-
-  it 'should get record by lte matcher' do
-    person = Person.first(:age.lte => 25)
-    person.should_not be_nil
+    people = Person.all(:age.lte => 25).each_with_index do |person, index|
+      [@jeremy, @keegan].should be_include(person)
+      index.should < 2
+    end
   end
   
   it 'should get records with multiple matchers' do
-    people = Person.all(:birthday => Date.today, :age.lte => 25)
-    people.length.should == 2
+    people = Person.all(:wealth => 25.00, :age.lte => 25).each_with_index do |person, index|
+      [@jeremy, @keegan].should be_include(person)
+      index.should < 2
+    end
   end
 
   it 'should get records by the like matcher' do
-    people = Person.all(:name.like => 'Jeremy%')
-    people.should == [@jeremy]
+    people = Person.all(:name.like => 'Jeremy%').each do |person|
+      person.should == @jeremy
+    end
   end
   
   it 'should get records by the IN matcher' do
-    people = Person.all(:id => [@jeremy.id, @danielle.id])
-    people.should include(@jeremy)
-    people.should include(@danielle)
-    people.should_not include(@keegan)
+    people = Person.all(:ssn => [@jeremy.ssn, @danielle.ssn]).each_with_index do |person, index|
+      [@jeremy, @danielle].should be_include(person)
+      @keegan.should_not == person
+      index.should < 2
+    end
   end
   it "should get no records if IN array is empty" do
-    people = Person.all(:id => [])
+    people = Person.all(:ssn => [])
     people.should be_empty
   end
 end
