@@ -73,7 +73,6 @@ DEPENDENCIES
   dm-types (~> 1.2)
   dm-validations (~> 1.2)
   jeweler
-  multi_json
   rake
   rspec
   sdbtools (~> 0.5.0)
