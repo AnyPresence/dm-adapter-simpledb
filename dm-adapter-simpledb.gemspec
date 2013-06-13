@@ -3,6 +3,9 @@
 # Instead, edit Jeweler::Tasks in Rakefile, and run 'rake gemspec'
 # -*- encoding: utf-8 -*-
 
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 Gem::Specification.new do |s|
   s.name = "dm-adapter-simpledb"
   s.version = "1.5.1"
