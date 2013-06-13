@@ -20,7 +20,6 @@ describe 'with multiple records saved' do
     time = DateTime.civil(1970,1,1)
     @jeremy.created_at = time
     @jeremy.save
-    @adapter.wait_for_consistency
     person = Professor.get!(@jeremy.id, @jeremy.name)
     person.created_at.should == time
   end

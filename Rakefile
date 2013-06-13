@@ -19,7 +19,7 @@ namespace :spec do
   desc 'Run integration-level specifications'
   RSpec::Core::RakeTask.new(:integration) do |spec|
     spec.rspec_opts = OPTS
-    spec.pattern = 'spec/integration/simpledb_adapter_spec.rb'
+    spec.pattern = 'spec/integration/*_spec.rb'
     spec.rcov = false
   end
 

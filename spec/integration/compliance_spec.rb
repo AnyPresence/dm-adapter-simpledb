@@ -57,7 +57,7 @@ describe DataMapper::Adapters::SimpleDBAdapter do
 
   if adapter_supports?(:update)
     describe '#update' do
-      before do
+      before :each do
         @heffalump = heffalump_model.create(:color => 'indigo')
       end
 
@@ -77,7 +77,7 @@ describe DataMapper::Adapters::SimpleDBAdapter do
 
       it 'should update altered fields' do
         @heffalump.color = 'violet'
-        @heffalump.save
+        @heffalump.save.should be_true
         heffalump_model.get(*@heffalump.key).color.should == 'violet'
       end
 

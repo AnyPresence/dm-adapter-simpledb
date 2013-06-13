@@ -116,7 +116,6 @@ module DataMapper
           records = records.uniq if query.unique?
           records = query.match_records(records) if query.conditions
           records = query.sort_records(records)  if query.order
-
           records
         end
       end

@@ -86,7 +86,6 @@ describe 'with multiple records saved' do
         resources << Hero.new(:id => i, :name => "Hero#{i}")
       end
       DataMapper.repository(:default).create(resources)
-      @adapter.wait_for_consistency
     end
 
     it "should support limits over 100" do

@@ -11,6 +11,18 @@ require 'dm-types'
 # that 
 module DataMapper
   class Property
+    class ArrayWrapper
+      def initialize(value)
+        @value = value
+      end
+      def to_ary
+        @value
+      end
+      def to_s
+        @value.to_s
+      end
+    end
+    
     class SdbArray < DataMapper::Property::Object
       primitive ::Object
       lazy      true
@@ -18,39 +30,55 @@ module DataMapper
       def custom?
         true
       end
-            
-      def self.load(value, property)
-        value
+      
+      def load(value)
+        return if value.nil? 
+        return value.to_ary if value.kind_of?(ArrayWrapper)
+        raise "oops!"
       end
 
-      def self.dump(value, property)
-        dumped = ::Object.new
-        # This is a little screwy. DataMapper has a fixed list of values it
-        # considers primitives, and it insists that the value that comes out of
-        # a type's .dump() method MUST match one of these types. For SimpleDB
-        # Array is effectively a primitive because of the way it stores values,
-        # but DM doesn't include Array in it's list of valid primtive types. So
-        # we need to return an object which IS considered a primitive - in this
-        # case a plain 'ole Ruby Object. In order to convey the actual array
-        # value to the backend, we tack on a #to_ary method which returns the
-        # array data. Aws calls Array() on all values before writing them,
-        # which in turn calls #to_ary(), and winds up with the correct data. In
-        # effect we are sneaking the array data through DataMapper inside a
-        # singleton method.
-        singleton_class = (class << dumped; self; end)
-        singleton_class.send(:define_method, :to_ary) do
+      def dump(value)
+        return if value.nil?
+        if value.kind_of?(ArrayWrapper)
           value
+        else
+          ArrayWrapper.new(value) 
         end
-        singleton_class.send(:define_method, :to_s) do
-          value.to_s
-        end
-        dumped
       end
 
-      def self.typecast(value, property)
-        value
+      def typecast(value)
+        return if value.nil?
+        if value.kind_of?(ArrayWrapper)
+          value
+        elsif value.kind_of?(::Array)
+          ArrayWrapper.new(value) 
+        elsif value.kind_of?(::String)
+          array = if value.start_with?("[") && value.end_with?("]")
+            split_into_array(value)
+          else 
+            [value]
+          end
+          ArrayWrapper.new(array)
+        else
+          raise "what do we do here? #{value.inspect}"
+        end
       end
-
+      
+      def split_into_array(array_string) 
+        if array_string.size == 2
+          array = []
+        else
+          array = array_string[1..-2].split(',').map{|s| chop_double_quotes(s.strip) }
+        end
+      end
+      
+      def chop_quotes(string)
+        if (string.start_with?("\"") && string.end_with?("\""))
+          string[1..-2] 
+        else
+          string
+        end
+      end
     end 
   end
 end

@@ -6,7 +6,7 @@ require 'logger'
 require 'fileutils'
 require 'rspec'
 require 'rspec/core'
-require 'dm-validations'
+
 DOMAIN_FILE_MESSAGE = <<END
 !!! ATTENTION !!!
 In order to operate, these specs need a throwaway SimpleDB domain to operate
@@ -105,7 +105,7 @@ end
 
 class Friend
   include DataMapper::Resource
-
+  property :id,         DataMapper::Property::Serial
   property :ssn,        DataMapper::Property::String, :key => true
   property :name,       DataMapper::Property::String, :key => true
   property :long_name,  DataMapper::Property::String
@@ -122,8 +122,8 @@ end
 class Network
   include DataMapper::Resource
   
-  property :id,   DataMapper::Property::String, :key => true
-  property :name, DataMapper::Property::String, :key => true
+  property :id,   DataMapper::Property::Serial
+  property :name, DataMapper::Property::String
   
   has n, :friends
 end
@@ -163,7 +163,7 @@ RSpec.configure do |config|
         :secret_key => secret_key,
         :domain => test_domain,
         :logger => log,
-        :wait_for_consistency => :manual
+        :wait_for_consistency => :automatic
       })
     $control_sdb = adapter.sdb_interface
     DataMapper.finalize

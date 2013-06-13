@@ -14,7 +14,6 @@ describe 'with multiple records saved' do
   end
   
   it 'should get all records' do
-    
     Person.all.each do |person|
       [@jeremy, @danielle, @keegan].should be_include(person)
     end
