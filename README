@@ -1,4 +1,4 @@
-= dm-adapter-simpledb
+= dm-simpledb-adapter
 
 == What
 
@@ -35,8 +35,8 @@ Contributers:
 
 == Where
 
-dm-adapter-simpledb is currently maintained by the Devver team and lives at:
-http://github.com/devver/dm-adapter-simpledb/
+dm-simpledb-adapter is currently maintained by the Devver team and lives at:
+http://github.com/devver/dm-simpledb-adapter/
 
 == TODO
 
@@ -64,7 +64,7 @@ http://github.com/devver/dm-adapter-simpledb/
   
     require 'rubygems'
     require 'dm-core'
-    require 'dm-adapter-simpledb'
+    require 'dm-simpledb-adapter'
     
     DataMapper.setup(:default, 
       :adapter       => 'simpledb',

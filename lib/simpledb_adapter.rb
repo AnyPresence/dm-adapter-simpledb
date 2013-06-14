@@ -1,2 +1,2 @@
 # This file is for backwards compatibility
-require 'dm-adapter-simpledb'
+require 'dm-simpledb-adapter'

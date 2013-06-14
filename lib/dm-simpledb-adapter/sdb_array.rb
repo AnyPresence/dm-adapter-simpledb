@@ -24,7 +24,7 @@ module DataMapper
     end
     
     class SdbArray < DataMapper::Property::Object
-      primitive ::Object
+      primitive ArrayWrapper
       lazy      true
       
       def custom?
@@ -33,6 +33,7 @@ module DataMapper
       
       def load(value)
         return if value.nil? 
+        return value if value.kind_of?(::Array)
         return value.to_ary if value.kind_of?(ArrayWrapper)
         raise "oops!"
       end
@@ -47,18 +48,19 @@ module DataMapper
       end
 
       def typecast(value)
+
         return if value.nil?
         if value.kind_of?(ArrayWrapper)
-          value
+          value.to_ary
         elsif value.kind_of?(::Array)
-          ArrayWrapper.new(value) 
+          ArrayWrapper.new(value).to_ary 
         elsif value.kind_of?(::String)
           array = if value.start_with?("[") && value.end_with?("]")
             split_into_array(value)
           else 
             [value]
           end
-          ArrayWrapper.new(array)
+          ArrayWrapper.new(array).to_ary
         else
           raise "what do we do here? #{value.inspect}"
         end

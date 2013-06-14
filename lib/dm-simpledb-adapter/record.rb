@@ -87,6 +87,7 @@ module DmAdapterSimpledb
       result = transform_hash(fields) {|hash, property|
         hash[property.name.to_s] = self[property.field, property]
       }
+
       result
     end
 
@@ -115,6 +116,7 @@ module DmAdapterSimpledb
     end
 
     def coerce_to_type(values, type)
+
       case 
       when type <= String
         case values.size
@@ -126,6 +128,8 @@ module DmAdapterSimpledb
           ChunkedString.new(values)
         end
       when type <= Array, type <= DataMapper::Property::SdbArray
+        values
+      when type == DataMapper::Property::ArrayWrapper
         values
       else
         values.first
@@ -206,6 +210,7 @@ module DmAdapterSimpledb
       attributes = attributes.to_a.map {|a| [a.first.name.to_s, a.last]}
       attributes = Hash[*attributes.flatten(1)]
       attributes = adjust_to_sdb_attributes(attributes)
+
       updates, deletes = attributes.partition{|name,value|
         !Array(value).empty?
       }
@@ -226,8 +231,8 @@ module DmAdapterSimpledb
       attrs = transform_hash(attrs) do |result, key, value|
         if primitive_value_of(value.class) <= String
           result[key] = ChunkedString.new(value).to_a
-        elsif value.class == Object # This is for SdbArray
-          result[key] = value.to_ary
+        elsif value.class == DataMapper::Property::ArrayWrapper # This is for SdbArray
+          result[key] = value
         elsif primitive_value_of(value.class) <= Array
           result[key] = value
         elsif value.nil?

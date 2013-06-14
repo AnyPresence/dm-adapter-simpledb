@@ -1,5 +1,5 @@
 require File.expand_path('../unit_spec_helper', File.dirname(__FILE__))
-require 'dm-adapter-simpledb/where_expression'
+require 'dm-simpledb-adapter/where_expression'
 
 module DmAdapterSimpledb
   include DataMapper::Query::Conditions

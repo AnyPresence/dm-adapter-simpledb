@@ -17,9 +17,9 @@ describe 'with multiple records saved' do
   end
   
   after(:each) do
-    @jeremy.destroy
-    @danielle.destroy
-    @keegan.destroy
+    #@jeremy.destroy
+    #@danielle.destroy
+    #@keegan.destroy
   end
   
   it 'should store hobbies as array' do

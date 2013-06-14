@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-require File.expand_path('../lib/dm-adapter-simpledb', File.dirname(__FILE__))
+require File.expand_path('../lib/dm-simpledb-adapter', File.dirname(__FILE__))
 require 'logger'
 
 include DataMapper
