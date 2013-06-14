@@ -1,7 +1,7 @@
 require 'dm-core'
-require 'dm-adapter-simpledb/utils'
-require 'dm-adapter-simpledb/chunked_string'
-require 'dm-adapter-simpledb/table'
+require 'dm-simpledb-adapter/utils'
+require 'dm-simpledb-adapter/chunked_string'
+require 'dm-simpledb-adapter/table'
 
 # TODO
 # * V1.1: Store type in __dm_metadata

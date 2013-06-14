@@ -4,12 +4,12 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "dm-adapter-simpledb"
-  s.version = "1.5.1"
+  s.name = "dm-simpledb-adapter"
+  s.version = "1.5.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jeremy Boles", "Edward Ocampo-Gooding", "Dan Mayer", "Thomas Olausson", "Avdi Grimm"]
-  s.date = "2013-06-13"
+  s.date = "2013-06-14"
   s.description = "A DataMapper adapter for Amazon's SimpleDB service. \n\nFeatures:\n * Full set of CRUD operations\n * Supports all DataMapper query predicates.\n * Can translate many queries into efficient native SELECT operations.\n * Migrations\n * DataMapper identity map support for record caching\n * Lazy-loaded attributes\n * DataMapper Serial property support via UUIDs.\n * Array properties\n * Basic aggregation support (Model.count(\"...\"))\n * String \"chunking\" permits attributes to exceed the 1024-byte limit\n\nNote: as of version 1.0.0, this gem supports supports the DataMapper 0.10.*\nseries and breaks backwards compatibility with DataMapper 0.9.*.\n"
   s.email = "devs@devver.net"
   s.extra_rdoc_files = [
@@ -26,16 +26,8 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "aws_config.sample",
-    "lib/dm-adapter-simpledb.rb",
-    "lib/dm-adapter-simpledb/adapters/simpledb_adapter.rb",
-    "lib/dm-adapter-simpledb/chunked_string.rb",
-    "lib/dm-adapter-simpledb/migrations/simpledb_adapter.rb",
-    "lib/dm-adapter-simpledb/rake.rb",
-    "lib/dm-adapter-simpledb/record.rb",
-    "lib/dm-adapter-simpledb/sdb_array.rb",
-    "lib/dm-adapter-simpledb/table.rb",
-    "lib/dm-adapter-simpledb/utils.rb",
-    "lib/dm-adapter-simpledb/where_expression.rb",
+    "dm-simpledb-adapter.gemspec",
+    "lib/dm-simpledb-adapter.rb",
     "lib/simpledb_adapter.rb",
     "scripts/console",
     "scripts/limits_benchmark",
@@ -56,7 +48,7 @@ Gem::Specification.new do |s|
     "spec/unit/simpledb_adapter_spec.rb",
     "spec/unit/unit_spec_helper.rb"
   ]
-  s.homepage = "http://github.com/devver/dm-adapter-simpledb"
+  s.homepage = "http://github.com/devver/dm-simpledb-adapter"
   s.require_paths = ["lib"]
   s.rubygems_version = "2.0.3"
   s.summary = "DataMapper adapter for Amazon SimpleDB"

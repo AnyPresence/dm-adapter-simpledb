@@ -1,6 +1,6 @@
 require 'pathname'
 require Pathname(__FILE__).dirname.expand_path + 'spec_helper'
-require 'dm-adapter-simpledb/sdb_array'
+require 'dm-simpledb-adapter/sdb_array'
 
 describe 'with multiple records saved' do
   

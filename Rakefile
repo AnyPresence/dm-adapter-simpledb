@@ -19,7 +19,7 @@ namespace :spec do
   desc 'Run integration-level specifications'
   RSpec::Core::RakeTask.new(:integration) do |spec|
     spec.rspec_opts = OPTS
-    spec.pattern = 'spec/integration/*_spec.rb'
+    spec.pattern = 'spec/integration/*mp*_spec.rb'
     spec.rcov = false
   end
 
@@ -28,10 +28,10 @@ end
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name            = "dm-adapter-simpledb"
+    gem.name            = "dm-simpledb-adapter"
     gem.summary         = "DataMapper adapter for Amazon SimpleDB"
     gem.email           = "devs@devver.net"
-    gem.homepage        = "http://github.com/devver/dm-adapter-simpledb"
+    gem.homepage        = "http://github.com/AnyPresence/dm-simpledb-adapter"
     gem.description     = <<END
 A DataMapper adapter for Amazon's SimpleDB service. 
 

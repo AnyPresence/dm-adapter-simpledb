@@ -1,6 +1,6 @@
 require File.expand_path('unit_spec_helper', File.dirname(__FILE__))
-require 'dm-adapter-simpledb/record'
-require 'dm-adapter-simpledb/sdb_array'
+require 'dm-simpledb-adapter/record'
+require 'dm-simpledb-adapter/sdb_array'
 
 describe DmAdapterSimpledb::Record do
 
