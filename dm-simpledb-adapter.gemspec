@@ -3,9 +3,6 @@
 # Instead, edit Jeweler::Tasks in Rakefile, and run 'rake gemspec'
 # -*- encoding: utf-8 -*-
 
-lib = File.expand_path('../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-
 Gem::Specification.new do |s|
   s.name = "dm-simpledb-adapter"
   s.version = "1.5.2"
@@ -31,6 +28,15 @@ Gem::Specification.new do |s|
     "aws_config.sample",
     "dm-simpledb-adapter.gemspec",
     "lib/dm-simpledb-adapter.rb",
+    "lib/dm-simpledb-adapter/adapters/simpledb_adapter.rb",
+    "lib/dm-simpledb-adapter/chunked_string.rb",
+    "lib/dm-simpledb-adapter/migrations/simpledb_adapter.rb",
+    "lib/dm-simpledb-adapter/rake.rb",
+    "lib/dm-simpledb-adapter/record.rb",
+    "lib/dm-simpledb-adapter/sdb_array.rb",
+    "lib/dm-simpledb-adapter/table.rb",
+    "lib/dm-simpledb-adapter/utils.rb",
+    "lib/dm-simpledb-adapter/where_expression.rb",
     "lib/simpledb_adapter.rb",
     "scripts/console",
     "scripts/limits_benchmark",
@@ -51,7 +57,7 @@ Gem::Specification.new do |s|
     "spec/unit/simpledb_adapter_spec.rb",
     "spec/unit/unit_spec_helper.rb"
   ]
-  s.homepage = "http://github.com/devver/dm-simpledb-adapter"
+  s.homepage = "http://github.com/AnyPresence/dm-simpledb-adapter"
   s.require_paths = ["lib"]
   s.rubygems_version = "2.0.3"
   s.summary = "DataMapper adapter for Amazon SimpleDB"
