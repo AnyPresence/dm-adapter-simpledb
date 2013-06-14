@@ -68,7 +68,7 @@ module DataMapper
         if array_string.size == 2
           array = []
         else
-          array = array_string[1..-2].split(',').map{|s| chop_double_quotes(s.strip) }
+          array = array_string[1..-2].split(',').map{|s| chop_quotes(s.strip) }
         end
       end
       
