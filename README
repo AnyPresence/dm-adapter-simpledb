@@ -19,8 +19,8 @@ Features:
  * Support for efficient :limit and :offset, for result set paging
  * Robust quoting of names in values in selects
 
-Note: as of version 1.0.0, this gem supports supports the DataMapper 0.10.*
-series and breaks backwards compatibility with DataMapper 0.9.*.
+Note: as of version 1.5.2, this gem supports the DataMapper 1.2
+series.
 
 == Who
 
@@ -31,12 +31,12 @@ Contributers:
   Dan Mayer (danmayer)
   Thomas Olausson (latompa)
   Avdi Grimm (avdi)
-
+  AnyPresence, Inc.
 
 == Where
 
-dm-simpledb-adapter is currently maintained by the Devver team and lives at:
-http://github.com/devver/dm-simpledb-adapter/
+dm-simpledb-adapter is currently maintained by the AnyPresence team and lives at:
+http://github.com/AnyPresence/dm-adapter-simpledb/
 
 == TODO
 
@@ -57,7 +57,7 @@ http://github.com/devver/dm-simpledb-adapter/
    See http://pivotallabs.com/users/carl/blog/articles/1079-standup-blog-11-24-2009-model-validations-without-backing-store-associations-to-array-and-ssl-with-aws
  * Token cache for reduced requests when given an offset
  * Optimize key queries
-
+ * Fix SdbArray support in query conditions
 == Usage
   
 === Standalone
