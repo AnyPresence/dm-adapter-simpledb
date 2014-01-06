@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 DM_VERSION    = '~> 1.2'
 
-gem 'bundler', '~> 1.3.5'
+gem 'bundler', '~> 1.5'
 gem 'rake'
 
 gem 'dm-migrations', DM_VERSION
